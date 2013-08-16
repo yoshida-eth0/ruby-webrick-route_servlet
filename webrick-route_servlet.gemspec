@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["yoshida.eth0@gmail.com"]
   spec.description   = %q{WEBrick::RouteServlet is like a Rails routes.rb.}
   spec.summary       = %q{WEBrick::RouteServlet is like a Rails routes.rb. This servlet recognizes URLs and dispatches them to another servlet.}
-  spec.homepage      = ""
+  spec.homepage      = "https://github.com/yoshida-eth0/ruby-webrick-route_servlet"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
