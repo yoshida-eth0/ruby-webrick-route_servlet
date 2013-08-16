@@ -9,10 +9,14 @@ class IndexServlet < WEBrick::HTTPServlet::AbstractServlet
   def do_GET(req, res)
     res.content_type = "text/html"
     res.body = "<h2>IndexServlet</h2>"
+    res.body += "<h4>PageServlet:</h4>"
     3.times {
       page = ("a".."z").to_a.shuffle[0..7].join
       res.body += "<a href='/#{page}'>/#{page}</a><br />"
     }
+    res.body += "<br />"
+    res.body += "<h4>NotFoundServlet:</h4>"
+    res.body += "<a href='/no/match/path'>/no/match/path</a><br />"
   end
 end
 

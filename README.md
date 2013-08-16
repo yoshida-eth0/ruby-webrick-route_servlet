@@ -1,6 +1,6 @@
 # WEBrick::RouteServlet
 
-WEBrick::RouteServlet is like a Rails routes.rb.
+WEBrick::RouteServlet is like a Rails routes.rb.  
 This servlet recognizes URLs and dispatches them to another servlet.
 
 ## Installation
