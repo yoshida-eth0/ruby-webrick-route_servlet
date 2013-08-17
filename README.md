@@ -22,7 +22,7 @@ Or install it yourself as:
     server = WEBrick::HTTPServer.new(:Port=>3000)
     server.mount("/", WEBrick::RouteServlet.servlet{|s|
       s.root IndexServlet
-      s.match "/:page", PageServlet
+      s.match "/:controller(/:action(/:id))(.:format)", ActionServlet
       s.match "/*path", NotFoundServlet
     })
     server.start
