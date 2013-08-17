@@ -12,10 +12,11 @@ class IndexServlet < WEBrick::HTTPServlet::AbstractServlet
     res.body = "<h2>IndexServlet</h2>"
     res.body += "<h4>XxxApiServlet:</h4>"
     res.body += "<a href='/api/people/@me/@frields'>/api/people/@me/@frields</a><br />"
-    res.body += "<a href='/api/no/match/api'>/api/no/match/api</a><br />"
+    res.body += "<a href='/api/activities/@me/@frields/@app'>/api/activities/@me/@frields/@app</a><br />"
+    res.body += "<a href='/api/no-match-path-route'>/api/no-match-path-route</a><br />"
     res.body += "<br />"
     res.body += "<h4>NotFoundServlet:</h4>"
-    res.body += "<a href='/no/match/path'>/no/match/path</a><br />"
+    res.body += "<a href='/no/match/path/route'>/no/match/path/route</a><br />"
   end
 end
 
@@ -28,13 +29,16 @@ class NotFoundServlet < WEBrick::HTTPServlet::AbstractServlet
   end
 end
 
-class PeopleApiServlet < WEBrick::HTTPServlet::AbstractServlet
+class OpenSocialApiServlet < WEBrick::HTTPServlet::AbstractServlet
   def do_GET(req, res)
     res.content_type = "text/plain"
     res.body = JSON.pretty_generate({
       "servlet" => self.class.name,
+      "type" => req.params["type"],
       "guid" => req.params["guid"],
       "selector" => req.params["selector"],
+      "appid" => req.params["appid"],
+      "resourceid" => req.params["resourceid"],
     })
   end
 end
@@ -55,7 +59,7 @@ server.mount("/", WEBrick::RouteServlet.servlet{|s|
   s.match "/*path", NotFoundServlet
 })
 server.mount("/api", WEBrick::RouteServlet.servlet{|s|
-  s.match "/people/:guid/:selector", PeopleApiServlet
+  s.match "/:type/:guid/:selector(/:appid(/:resourceid))", OpenSocialApiServlet
   s.match "/*path", NotFoundApiServlet
 })
 server.start
