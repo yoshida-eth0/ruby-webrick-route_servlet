@@ -43,7 +43,7 @@ module WEBrick
         md = re.match(req.path_info)
         if md
           req.extend WEBrick::RouteServlet::HTTPRequest
-          req.params = md
+          req.params = Hash[md.names.zip(md.captures)]
           return [servlet, options, 200]
         end
       end
@@ -65,9 +65,18 @@ module WEBrick
 
       def normalize_path_re(re)
         unless Regexp===re
-          re = re.to_s.gsub(%r#/{2,}#, "/").sub(%r#^/?#, "^/").sub(%r#/?$#, '/?$')
-          re = re.gsub(%r#/:([^/]+)#, '/(?<\1>[^/]+)')
-          re = re.gsub(%r#/\*([^/]+)#, '/(?<\1>.+?)')
+          # normalize slash
+          re = re.to_s.gsub(%r#/{2,}#, "/")
+          # escape
+          re = re.gsub(/([\.\-?*+\\^$])/, '\\\\\1')
+          # start end regexp
+          re = re.sub(%r#^/?#, "^/").sub(%r#/?$#, '/?$')
+          # normalize parentheses
+          re = re.gsub(")", ")?")
+          # named capture
+          re = re.gsub(%r#/:([^/()\.]+)#, '/(?<\1>[^/]+?)')
+          re = re.gsub(%r#\.:([^/()\.]+)#, '.(?<\1>[^/]+?)')
+          re = re.gsub(%r#/\\\*([^/]+)#, '/(?<\1>.+?)')
           re = Regexp.new(re)
         end
         re
