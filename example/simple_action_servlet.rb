@@ -88,6 +88,10 @@ class NotFoundServlet < WEBrick::HTTPServlet::AbstractServlet
     res.body += "path: #{req.params[:path]}"
     res.body += "<p><a href='/'>index</a></p>"
   end
+
+  def do_POST(req, res)
+    do_GET(req, res)
+  end
 end
 
 server = WEBrick::HTTPServer.new(:Port=>3000)

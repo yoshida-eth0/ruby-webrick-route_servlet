@@ -79,23 +79,39 @@ module WEBrick
 
       def resources(re, servlet, *servlet_options, **request_options)
         re = re.to_s.sub(%r#/$#, "")
-        get    "#{re}(.:format)",          servlet, *servlet_options, request_options.merge({:action => :index})
-        post   "#{re}(.:format)",          servlet, *servlet_options, request_options.merge({:action => :create})
-        get    "#{re}/new(.:format)",      servlet, *servlet_options, request_options.merge({:action => :new})
-        get    "#{re}/:id/edit(.:format)", servlet, *servlet_options, request_options.merge({:action => :edit})
-        get    "#{re}/:id(.:format)",      servlet, *servlet_options, request_options.merge({:action => :show})
-        put    "#{re}/:id(.:format)",      servlet, *servlet_options, request_options.merge({:action => :update})
-        delete "#{re}/:id(.:format)",      servlet, *servlet_options, request_options.merge({:action => :destroy})
+
+        actions = {
+          :index   => [:get,    "#{re}(.:format)"],
+          :create  => [:post,   "#{re}(.:format)"],
+          :new     => [:get,    "#{re}/new(.:format)"],
+          :edit    => [:get,    "#{re}/:id/edit(.:format)"],
+          :show    => [:get,    "#{re}/:id(.:format)"],
+          :update  => [:put,    "#{re}/:id(.:format)"],
+          :delete  => [:delete, "#{re}/:id(.:format)"],
+        }
+        actions = _select_rest_actions(actions, request_options)
+
+        actions.each do |action, (method, re)|
+          send(method, re, servlet, *servlet_options, request_options.merge({:action => action}))
+        end
       end
 
       def resource(re, servlet, *servlet_options, **request_options)
         re = re.to_s.sub(%r#/$#, "")
-        post   "#{re}(.:format)",      servlet, *servlet_options, request_options.merge({:action => :create})
-        get    "#{re}/new(.:format)",  servlet, *servlet_options, request_options.merge({:action => :new})
-        get    "#{re}/edit(.:format)", servlet, *servlet_options, request_options.merge({:action => :edit})
-        get    "#{re}(.:format)",      servlet, *servlet_options, request_options.merge({:action => :show})
-        put    "#{re}(.:format)",      servlet, *servlet_options, request_options.merge({:action => :update})
-        delete "#{re}(.:format)",      servlet, *servlet_options, request_options.merge({:action => :destroy})
+
+        actions = {
+          :create => [:post,   "#{re}(.:format)"],
+          :new    => [:get,    "#{re}/new(.:format)"],
+          :edit   => [:get,    "#{re}/edit(.:format)"],
+          :show   => [:get,    "#{re}(.:format)"],
+          :update => [:put,    "#{re}(.:format)"],
+          :delete => [:delete, "#{re}(.:format)"],
+        }
+        actions = _select_rest_actions(actions, request_options)
+
+        actions.each do |action, (method, re)|
+          send(method, re, servlet, *servlet_options, request_options.merge({:action => action}))
+        end
       end
 
       def routes
@@ -121,6 +137,27 @@ module WEBrick
         re
       end
       private :_normalize_path_re
+
+      def _select_rest_actions(actions, request_options)
+        actions
+
+        # only
+        if request_options[:only]
+          only = request_options[:only]
+          only = [only] unless Array===only
+          actions.select!{|k,v| only.include?(k)}
+        end
+
+        # expect
+        if request_options[:expect]
+          expect = request_options[:expect]
+          expect = [expect] unless Array===expect
+          actions.delete_if{|k,v| expect.include?(k)}
+        end
+
+        actions
+      end
+      private :_select_rest_actions
     end
 
     class << self
