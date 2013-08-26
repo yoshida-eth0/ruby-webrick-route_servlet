@@ -47,7 +47,8 @@ module WEBrick
           if md
             params = Hash[md.names.map(&:to_sym).zip(md.captures)]
             params.delete_if{|k,v| v.nil?}
-            req.params = request_options.merge(params)
+            req.action = params[:action] || request_options[:action]
+            req.params = params
             return [servlet, servlet_options]
           end
         end
@@ -60,19 +61,22 @@ module WEBrick
 
       def match(re, servlet, *servlet_options, **request_options)
         @routes ||= []
-        @routes << [:*, _normalize_path_re(re), servlet, servlet_options, request_options]
+        re = _normalize_path_re(re, request_options)
+        _select_via(request_options).each do |via|
+          @routes << [via, re, servlet, servlet_options, request_options]
+        end
       end
 
       def root(servlet, *servlet_options, **request_options)
         @routes ||= []
-        @routes.unshift([:*, _normalize_path_re("/"), servlet, servlet_options, request_options])
+        @routes.unshift([:*, _normalize_path_re("/", request_options), servlet, servlet_options, request_options])
       end
 
       ["get", "post", "put", "delete"].each do |method|
         class_eval %{
           def #{method}(re, servlet, *servlet_options, **request_options)
             @routes ||= []
-            @routes << [:#{method.upcase}, _normalize_path_re(re), servlet, servlet_options, request_options]
+            @routes << [:#{method.upcase}, _normalize_path_re(re, request_options), servlet, servlet_options, request_options]
           end
         }
       end
@@ -118,7 +122,7 @@ module WEBrick
         @routes ||= []
       end
 
-      def _normalize_path_re(re)
+      def _normalize_path_re(re, request_options)
         unless Regexp===re
           # normalize slash
           re = re.to_s.gsub(%r#/{2,}#, "/")
@@ -128,15 +132,27 @@ module WEBrick
           re = re.sub(%r#^/?#, "^/").sub(%r#/?$#, '/?$')
           # normalize parentheses
           re = re.gsub(")", ")?")
-          # named capture
-          re = re.gsub(%r#/:([^/()\.]+)#, '/(?<\1>[^/]+?)')
-          re = re.gsub(%r#\.:([^/()\.]+)#, '.(?<\1>[^/]+?)')
-          re = re.gsub(%r#/\\\*([^/]+)#, '/(?<\1>.+?)')
+          # constrain named capture
+          constraints = request_options[:constraints] || request_options
+          keys = re.scan(%r#:([^/()\.]+)#).map(&:first).sort{|a,b| b.length <=> a.length}
+          keys.each do |key|
+            value_re = Regexp.new("(?<#{key}>[^/]+?)")
+            if Regexp===constraints[key.to_sym]
+              value_re = /(?<#{key}>#{constraints[key.to_sym]})/
+            end
+            re = re.gsub(":#{key}", value_re.to_s)
+          end
           re = Regexp.new(re)
         end
         re
       end
       private :_normalize_path_re
+
+      def _select_via(request_options)
+        via = request_options[:via] || :*
+        via = [via] unless Array===via
+        a = via.map(&:to_sym).map(&:upcase)
+      end
 
       def _select_rest_actions(actions, request_options)
         actions
@@ -148,11 +164,11 @@ module WEBrick
           actions.select!{|k,v| only.include?(k)}
         end
 
-        # expect
-        if request_options[:expect]
-          expect = request_options[:expect]
-          expect = [expect] unless Array===expect
-          actions.delete_if{|k,v| expect.include?(k)}
+        # except
+        if request_options[:except]
+          except = request_options[:except]
+          except = [except] unless Array===except
+          actions.delete_if{|k,v| except.include?(k)}
         end
 
         actions
