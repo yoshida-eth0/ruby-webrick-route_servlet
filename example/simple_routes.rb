@@ -27,11 +27,11 @@ end
 class ActionServlet < WEBrick::HTTPServlet::AbstractServlet
   def do_GET(req, res)
     res.content_type = "text/html"
-    res.body = "<h2>PageServlet</h2>"
-    res.body += "controller: #{req.params["controller"]}<br />"
-    res.body += "action: #{req.params["action"]}<br />"
-    res.body += "id: #{req.params["id"]}<br />"
-    res.body += "format: #{req.params["format"]}<br />"
+    res.body = "<h2>ActionServlet</h2>"
+    res.body += "controller: #{req.params[:controller]}<br />"
+    res.body += "action: #{req.params[:action]}<br />"
+    res.body += "id: #{req.params[:id]}<br />"
+    res.body += "format: #{req.params[:format]}<br />"
     res.body += "<p><a href='/'>index</a></p>"
   end
 end
@@ -40,7 +40,7 @@ class NotFoundServlet < WEBrick::HTTPServlet::AbstractServlet
   def do_GET(req, res)
     res.content_type = "text/html"
     res.body = "<h2>NotFoundServlet</h2>"
-    res.body += "path: #{req.params["path"]}"
+    res.body += "path: #{req.params[:path]}"
     res.body += "<p><a href='/'>index</a></p>"
   end
 end

@@ -24,7 +24,7 @@ class NotFoundServlet < WEBrick::HTTPServlet::AbstractServlet
   def do_GET(req, res)
     res.content_type = "text/html"
     res.body = "<h2>NotFoundServlet</h2>"
-    res.body += "<p>path: #{req.params["path"]}</p>"
+    res.body += "<p>path: #{req.params[:path]}</p>"
     res.body += "<a href='/'>index</a>"
   end
 end
@@ -34,11 +34,11 @@ class OpenSocialApiServlet < WEBrick::HTTPServlet::AbstractServlet
     res.content_type = "text/plain"
     res.body = JSON.pretty_generate({
       "servlet" => self.class.name,
-      "type" => req.params["type"],
-      "guid" => req.params["guid"],
-      "selector" => req.params["selector"],
-      "appid" => req.params["appid"],
-      "resourceid" => req.params["resourceid"],
+      "type" => req.params[:type],
+      "guid" => req.params[:guid],
+      "selector" => req.params[:selector],
+      "appid" => req.params[:appid],
+      "resourceid" => req.params[:resourceid],
     })
   end
 end
@@ -48,7 +48,7 @@ class NotFoundApiServlet < WEBrick::HTTPServlet::AbstractServlet
     res.content_type = "text/plain"
     res.body = JSON.pretty_generate({
       "servlet" => self.class.name,
-      "path" => req.params["path"],
+      "path" => req.params[:path],
     })
   end
 end
