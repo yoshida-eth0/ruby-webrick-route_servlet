@@ -67,8 +67,8 @@ via
 
 constraints
 
-    s.match "/photos/show", PhotoServlet, :constraints => { :id => /[A-Z]\d{5}/ }
-    s.match "/photos/show", PhotoServlet, :id => /[A-Z]\d{5}/
+    s.match "/photos/:id", PhotoServlet, :constraints => { :id => /[A-Z]\d{5}/ }
+    s.match "/photos/:id", PhotoServlet, :id => /[A-Z]\d{5}/
 
 only / except
 
