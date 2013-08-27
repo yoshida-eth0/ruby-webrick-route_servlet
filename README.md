@@ -77,8 +77,8 @@ only / except
 
 defaults
 
-    s.match "/photos/:id(.:format)", ActionServlet, :defaults => { :format => "json" }
-    s.match "/photos/:id(.:format)", ActionServlet, :format => "json"
+    s.match "/photos/:id(.:format)", PhotoServlet, :defaults => { :format => "json" }
+    s.match "/photos/:id(.:format)", PhotoServlet, :format => "json"
 
 ## Contributing
 
