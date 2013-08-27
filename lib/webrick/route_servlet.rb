@@ -56,8 +56,16 @@ module WEBrick
               end
             end
 
+            # set
             req.action = params[:action] || request_options[:action]
             req.params = params
+
+            # advanced constraints
+            constraints = request_options[:constraints]
+            if constraints.respond_to?(:matches?)
+              next unless constraints.matches?(req)
+            end
+
             return [servlet, servlet_options]
           end
         end
@@ -146,7 +154,7 @@ module WEBrick
           keys = re.scan(%r#:([^/()\.]+)#).map(&:first).sort{|a,b| b.length <=> a.length}
           keys.each do |key|
             value_re = Regexp.new("(?<#{key}>[^/]+?)")
-            if Regexp===constraints[key.to_sym]
+            if constraints.respond_to?(:[]) && Regexp===constraints[key.to_sym]
               value_re = /(?<#{key}>#{constraints[key.to_sym]})/
             end
             re = re.gsub(":#{key}", value_re.to_s)

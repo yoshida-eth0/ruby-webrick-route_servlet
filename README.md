@@ -69,6 +69,13 @@ constraints
 
     s.match "/photos/:id", PhotoServlet, :constraints => { :id => /[A-Z]\d{5}/ }
     s.match "/photos/:id", PhotoServlet, :id => /[A-Z]\d{5}/
+    s.match "/photos/:id", PhotoServlet, :constraints => PhotoConstraint.new
+    
+    class PhotoConstraint
+      def matches?(req)
+        /[A-Z]\d{5}/===req.params[:id]
+      end
+    end
 
 only / except
 
