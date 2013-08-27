@@ -75,6 +75,11 @@ only / except
     s.resources "/photo", PhotoServlet, :only => [:index]
     s.resources "/photo", PhotoServlet, :except => [:index, :show]
 
+defaults
+
+    s.match "/photos/:id(.:format)", ActionServlet, :defaults => { :format => "json" }
+    s.match "/photos/:id(.:format)", ActionServlet, :format => "json"
+
 ## Contributing
 
 1. Fork it

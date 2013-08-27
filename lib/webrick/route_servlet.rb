@@ -45,8 +45,17 @@ module WEBrick
         if method==:* || method==req.request_method.to_sym
           md = re.match(req.path_info)
           if md
+            # path params
             params = Hash[md.names.map(&:to_sym).zip(md.captures)]
-            params.delete_if{|k,v| v.nil?}
+
+            # default params
+            defaults = request_options[:defaults] || request_options
+            params.each do |k,v|
+              if v.nil?
+                params[k] = defaults[k]
+              end
+            end
+
             req.action = params[:action] || request_options[:action]
             req.params = params
             return [servlet, servlet_options]
