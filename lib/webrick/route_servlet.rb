@@ -41,8 +41,13 @@ module WEBrick
     end
 
     def select_route(req)
+      req_method = req.request_method.to_sym
+      if req.query["_method"]
+        req_method = req.query["_method"].upcase.to_sym
+      end
+
       self.class.routes.each do |method, re, servlet, servlet_options, request_options|
-        if method==:* || method==req.request_method.to_sym
+        if method==:* || method==req_method
           md = re.match(req.path_info)
           if md
             # path params
@@ -108,7 +113,7 @@ module WEBrick
           :edit    => [:get,    "#{re}/:id/edit(.:format)"],
           :show    => [:get,    "#{re}/:id(.:format)"],
           :update  => [:put,    "#{re}/:id(.:format)"],
-          :delete  => [:delete, "#{re}/:id(.:format)"],
+          :destroy => [:delete, "#{re}/:id(.:format)"],
         }
         _select_rest_actions(actions, request_options)
 
@@ -121,12 +126,12 @@ module WEBrick
         re = re.to_s.sub(%r#/$#, "")
 
         actions = {
-          :create => [:post,   "#{re}(.:format)"],
-          :new    => [:get,    "#{re}/new(.:format)"],
-          :edit   => [:get,    "#{re}/edit(.:format)"],
-          :show   => [:get,    "#{re}(.:format)"],
-          :update => [:put,    "#{re}(.:format)"],
-          :delete => [:delete, "#{re}(.:format)"],
+          :create  => [:post,   "#{re}(.:format)"],
+          :new     => [:get,    "#{re}/new(.:format)"],
+          :edit    => [:get,    "#{re}/edit(.:format)"],
+          :show    => [:get,    "#{re}(.:format)"],
+          :update  => [:put,    "#{re}(.:format)"],
+          :destroy => [:delete, "#{re}(.:format)"],
         }
         _select_rest_actions(actions, request_options)
 

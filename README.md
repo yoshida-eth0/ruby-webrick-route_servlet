@@ -77,9 +77,14 @@ constraints
       end
     end
 
-only / except
+only
 
-    s.resources "/photo", PhotoServlet, :only => [:index]
+    s.resources "/photo", PhotoServlet, :only => :index
+    s.resources "/photo", PhotoServlet, :only => [:index, :show]
+
+except
+
+    s.resources "/photo", PhotoServlet, :except => :index
     s.resources "/photo", PhotoServlet, :except => [:index, :show]
 
 defaults

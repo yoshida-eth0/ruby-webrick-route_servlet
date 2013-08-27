@@ -15,17 +15,18 @@ class IndexServlet < WEBrick::HTTPServlet::AbstractServlet
     res.body += create_link("GET", "/users/new", "new")
     res.body += create_link("GET", "/users/1/edit", "edit")
     res.body += create_link("GET", "/users/1", "show")
-    res.body += create_link("PUT", "/users/1", "update", true)
-    res.body += create_link("DELETE", "/users/1", "destroy", true)
+    res.body += create_link("PUT", "/users/1", "update")
+    res.body += create_link("DELETE", "/users/1", "destroy")
     res.body += "<br />"
     res.body += "<h4>NotFoundServlet:</h4>"
     res.body += "<a href='/no/match/path/route'>/no/match/path/route</a><br />"
   end
 
-  def create_link(method, path, action, disabled=false)
-    disabled = disabled ? " disabled='disabled'" : ""
-    "<form action='#{path}' method='#{method}'>\n" +
-    "<input type='submit' value='#{method} #{path} => #{action}'#{disabled} />\n" +
+  def create_link(method, path, action)
+    method2 = method=="GET" ? "GET" : "POST"
+    "<form action='#{path}' method='#{method2}'>\n" +
+    "<input type='hidden' name='_method' value='#{method}' />\n" +
+    "<input type='submit' value='#{method} #{path} => #{action}' />\n" +
     "</form>\n"
   end
 end
