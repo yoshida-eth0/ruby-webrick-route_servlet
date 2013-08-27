@@ -72,7 +72,7 @@ module WEBrick
         @routes.unshift([:*, _normalize_path_re("/", request_options), servlet, servlet_options, request_options])
       end
 
-      ["get", "post", "put", "delete"].each do |method|
+      ["get", "post", "patch", "put", "delete"].each do |method|
         class_eval %{
           def #{method}(re, servlet, *servlet_options, **request_options)
             @routes ||= []
@@ -93,7 +93,7 @@ module WEBrick
           :update  => [:put,    "#{re}/:id(.:format)"],
           :delete  => [:delete, "#{re}/:id(.:format)"],
         }
-        actions = _select_rest_actions(actions, request_options)
+        _select_rest_actions(actions, request_options)
 
         actions.each do |action, (method, re)|
           send(method, re, servlet, *servlet_options, request_options.merge({:action => action}))
@@ -111,7 +111,7 @@ module WEBrick
           :update => [:put,    "#{re}(.:format)"],
           :delete => [:delete, "#{re}(.:format)"],
         }
-        actions = _select_rest_actions(actions, request_options)
+        _select_rest_actions(actions, request_options)
 
         actions.each do |action, (method, re)|
           send(method, re, servlet, *servlet_options, request_options.merge({:action => action}))
@@ -151,12 +151,11 @@ module WEBrick
       def _select_via(request_options)
         via = request_options[:via] || :*
         via = [via] unless Array===via
-        a = via.map(&:to_sym).map(&:upcase)
+        via.map(&:to_sym).map(&:upcase)
       end
+      private :_select_via
 
       def _select_rest_actions(actions, request_options)
-        actions
-
         # only
         if request_options[:only]
           only = request_options[:only]

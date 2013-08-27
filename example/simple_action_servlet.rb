@@ -34,6 +34,7 @@ class UserServlet < WEBrick::RouteServlet::ActionServlet
   def index(req, res)
     res.content_type = "text/html"
     res.body = "<h2>RestServlet#index</h2>\n"
+    res.body += "<p>action: #{req.action}</p>\n"
     res.body += "<p>params: #{req.params}</p>\n"
     res.body += "<p><a href='/'>index</a></p>\n"
   end
@@ -41,6 +42,7 @@ class UserServlet < WEBrick::RouteServlet::ActionServlet
   def create(req, res)
     res.content_type = "text/html"
     res.body = "<h2>RestServlet#create</h2>\n"
+    res.body += "<p>action: #{req.action}</p>\n"
     res.body += "<p>params: #{req.params}</p>\n"
     res.body += "<p><a href='/'>index</a></p>\n"
   end
@@ -48,6 +50,7 @@ class UserServlet < WEBrick::RouteServlet::ActionServlet
   def new(req, res)
     res.content_type = "text/html"
     res.body = "<h2>RestServlet#new</h2>\n"
+    res.body += "<p>action: #{req.action}</p>\n"
     res.body += "<p>params: #{req.params}</p>\n"
     res.body += "<p><a href='/'>index</a></p>\n"
   end
@@ -55,6 +58,7 @@ class UserServlet < WEBrick::RouteServlet::ActionServlet
   def edit(req, res)
     res.content_type = "text/html"
     res.body = "<h2>RestServlet#edit</h2>\n"
+    res.body += "<p>action: #{req.action}</p>\n"
     res.body += "<p>params: #{req.params}</p>\n"
     res.body += "<p><a href='/'>index</a></p>\n"
   end
@@ -62,6 +66,7 @@ class UserServlet < WEBrick::RouteServlet::ActionServlet
   def show(req, res)
     res.content_type = "text/html"
     res.body = "<h2>RestServlet#show</h2>\n"
+    res.body += "<p>action: #{req.action}</p>\n"
     res.body += "<p>params: #{req.params}</p>\n"
     res.body += "<p><a href='/'>index</a></p>\n"
   end
@@ -69,6 +74,7 @@ class UserServlet < WEBrick::RouteServlet::ActionServlet
   def update(req, res)
     res.content_type = "text/html"
     res.body = "<h2>RestServlet#update</h2>\n"
+    res.body += "<p>action: #{req.action}</p>\n"
     res.body += "<p>params: #{req.params}</p>\n"
     res.body += "<p><a href='/'>index</a></p>\n"
   end
@@ -76,6 +82,7 @@ class UserServlet < WEBrick::RouteServlet::ActionServlet
   def destroy(req, res)
     res.content_type = "text/html"
     res.body = "<h2>RestServlet#destroy</h2>\n"
+    res.body += "<p>action: #{req.action}</p>\n"
     res.body += "<p>params: #{req.params}</p>\n"
     res.body += "<p><a href='/'>index</a></p>\n"
   end

@@ -50,10 +50,11 @@ resource
 
     s.resource "/profile", ProfileServlet
 
-get / post / put / delete
+get / post / patch / put / delete
 
     s.get "/photos", PhotoServlet
     s.post "/photos", PhotoServlet
+    s.patch "/photos", PhotoServlet
     s.put "/photos/123", PhotoServlet
     s.delete "/photos/123", PhotoServlet
 
