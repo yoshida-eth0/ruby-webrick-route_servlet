@@ -36,7 +36,7 @@ module WEBrick
         res.body = "<h2>#{e.class}: #{e.message}</h2>\n<pre>#{e.backtrace.join("\n")}</pre>"
       else
         # routing error
-        res.body = "RoutingError: #{req.path_info}"
+        res.body = "RoutingError: #{req.request_method} #{req.path_info}"
       end
     end
 
