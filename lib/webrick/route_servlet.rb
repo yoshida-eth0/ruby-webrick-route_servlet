@@ -148,13 +148,17 @@ module WEBrick
         unless Regexp===re
           # normalize slash
           re = re.to_s.gsub(%r#/{2,}#, "/")
+
           # escape
           re = re.gsub(/([\.\-?*+\\^$])/, '\\\\\1')
+
           # start end regexp
           re = re.sub(%r#^/?#, "^/").sub(%r#/?$#, '/?$')
+
           # normalize parentheses
           re = re.gsub(")", ")?")
-          # constrain named capture
+
+          # constrain named capture ':'
           constraints = request_options[:constraints] || request_options
           keys = re.scan(%r#:([^/()\.]+)#).map(&:first).sort{|a,b| b.length <=> a.length}
           keys.each do |key|
@@ -164,6 +168,17 @@ module WEBrick
             end
             re = re.gsub(":#{key}", value_re.to_s)
           end
+
+          # constrain named capture '*'
+          keys = re.scan(%r#\\\*([^/()\.]+)#).map(&:first).sort{|a,b| b.length <=> a.length}
+          keys.each do |key|
+            value_re = Regexp.new("(?<#{key}>.+?)")
+            if constraints.respond_to?(:[]) && Regexp===constraints[key.to_sym]
+              value_re = /(?<#{key}>#{constraints[key.to_sym]})/
+            end
+            re = re.gsub("\\*#{key}", value_re.to_s)
+          end
+
           re = Regexp.new(re)
         end
         re
