@@ -27,10 +27,6 @@ Or install it yourself as:
     })
     server.start
 
-## Example
-
-https://github.com/yoshida-eth0/ruby-webrick-route_servlet/tree/master/example
-
 ## Supported methods
 
 match
@@ -45,10 +41,23 @@ root
 resources
 
     s.resources "/photos", PhotoServlet
+    # GET    /photos(.:format)          => index
+    # POST   /photos(.:format)          => create
+    # GET    /photos/new(.:format)      => new
+    # GET    /photos/:id/edit(.:format) => edit
+    # GET    /photos/:id(.:format)      => show
+    # PUT    /photos/:id(.:format)      => update
+    # DELETE /photos/:id(.:format)      => destroy
 
 resource
 
     s.resource "/profile", ProfileServlet
+    # POST   /profile(.:format)      => create
+    # GET    /profile/new(.:format)  => new
+    # GET    /profile/edit(.:format) => edit
+    # GET    /profile(.:format)      => show
+    # PUT    /profile(.:format)      => update
+    # DELETE /profile(.:format)      => destroy
 
 get / post / patch / put / delete
 
@@ -91,6 +100,10 @@ defaults
 
     s.match "/photos/:id(.:format)", PhotoServlet, :defaults => { :format => "json" }
     s.match "/photos/:id(.:format)", PhotoServlet, :format => "json"
+
+## Example
+
+https://github.com/yoshida-eth0/ruby-webrick-route_servlet/tree/master/example
 
 ## Contributing
 

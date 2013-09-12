@@ -67,6 +67,7 @@ module WEBrick
           end
         end
       end
+
       nil
     end
 
