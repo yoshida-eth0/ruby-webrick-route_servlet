@@ -22,6 +22,7 @@ module WEBrick
       end
 
       # 500
+      res.status = 500
       if e
         # default 500
         res.body = "<h2>#{e.class}: #{e.message}</h2>\n<pre>#{e.backtrace.join("\n")}</pre>"
