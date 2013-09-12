@@ -22,15 +22,6 @@ module WEBrick
       end
 
       # 500
-      res.status = 500
-      if self.class.error500
-        begin
-          self.class.error500.get_instance(@config).servlet(req, res)
-          return
-        rescue Exception => e
-        end
-      end
-
       if e
         # default 500
         res.body = "<h2>#{e.class}: #{e.message}</h2>\n<pre>#{e.backtrace.join("\n")}</pre>"
@@ -79,8 +70,6 @@ module WEBrick
     end
 
     module ClassMethods
-      attr_accessor :error500
-
       def match(re, servlet, *servlet_options, **request_options)
         @routes ||= []
         re = _normalize_path_re(re, request_options)
@@ -187,7 +176,7 @@ module WEBrick
 
       def _select_via(request_options)
         via = request_options[:via] || :*
-        via = [via] unless Array===via
+        via = [via].flatten
         via.map(&:to_sym).map(&:upcase)
       end
       private :_select_via
@@ -196,14 +185,14 @@ module WEBrick
         # only
         if request_options[:only]
           only = request_options[:only]
-          only = [only] unless Array===only
+          only = [only].flatten
           actions.select!{|k,v| only.include?(k)}
         end
 
         # except
         if request_options[:except]
           except = request_options[:except]
-          except = [except] unless Array===except
+          except = [except].flatten
           actions.delete_if{|k,v| except.include?(k)}
         end
 
